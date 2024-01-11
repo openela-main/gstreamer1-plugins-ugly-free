@@ -5,8 +5,8 @@
 #global shortcommit %(c=%{gitcommit}; echo ${c:0:5})
 
 Name:           gstreamer1-plugins-ugly-free
-Version:        1.18.4
-Release:        3%{?dist}
+Version:        1.22.1
+Release:        1%{?dist}
 Summary:        GStreamer streaming media framework "ugly" plugins
 
 License:        LGPLv2+ and LGPLv2
@@ -37,8 +37,8 @@ BuildRequires:  libcdio-devel
 BuildRequires:  libdvdread-devel
 BuildRequires:  libmpeg2-devel
 
-# when mpeg2dec was moved here from -ugly
-Conflicts: gstreamer1-plugins-ugly < 1.16.0-2
+# when amr* were moved here from -ugly
+Conflicts: gstreamer1-plugins-ugly < 1.20.5-2
 
 %description
 GStreamer is a streaming media framework, based on graphs of elements which
@@ -72,7 +72,7 @@ is not fully compatible with LGPL.
     -D doc=disabled \
     -D amrnb=disabled -D amrwbdec=disabled -D sidplay=disabled \
     -D x264=disabled -D asfdemux=disabled -D dvdlpcmdec=disabled \
-    -D dvdsub=disabled -D realmedia=disabled
+    -D dvdsub=disabled -D realmedia=disabled -D gpl=enabled
 
 %meson_build
 
@@ -130,12 +130,11 @@ find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 
 %files -f gst-plugins-ugly-%{majorminor}.lang
 %license COPYING
-%doc AUTHORS README REQUIREMENTS
+%doc AUTHORS NEWS README.md README.static-linking RELEASE REQUIREMENTS
 
 %{_datadir}/appdata/*.appdata.xml
 
 # Plugins without external dependencies
-%{_libdir}/gstreamer-%{majorminor}/libgstxingmux.so
 
 # Plugins with external dependencies
 %{_libdir}/gstreamer-%{majorminor}/libgsta52dec.so
@@ -149,6 +148,9 @@ find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 %endif
 
 %changelog
+* Thu Apr 13 2023 Wim Taymans <wtaymans@redhat.com> - 1.22.1-1
+- Update to 1.22.1
+
 * Mon Aug 09 2021 Mohan Boddu <mboddu@redhat.com> - 1.18.4-3
 - Rebuilt for IMA sigs, glibc 2.34, aarch64 flags
   Related: rhbz#1991688
