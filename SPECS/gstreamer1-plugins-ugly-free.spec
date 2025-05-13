@@ -1,27 +1,30 @@
 %global         majorminor 1.0
 
+# Only build amrnb/amrwbdec on fedora
+%if 0%{?fedora}
+%bcond_without amr
+%else
+%bcond_with amr
+%endif
+
 #global gitrel     140
 #global gitcommit  4ca3a22b6b33ad8be4383063e76f79c4d346535d
 #global shortcommit %(c=%{gitcommit}; echo ${c:0:5})
 
 Name:           gstreamer1-plugins-ugly-free
-Version:        1.22.1
-Release:        1%{?dist}
+Version:        1.22.12
+Release:        3%{?dist}
 Summary:        GStreamer streaming media framework "ugly" plugins
 
-License:        LGPLv2+ and LGPLv2
+License:        LGPL-2.0-or-later AND LGPL-2.1-or-later AND CC0-1.0
 URL:            http://gstreamer.freedesktop.org/
 %if 0%{?gitrel}
 # git clone git://anongit.freedesktop.org/gstreamer/gst-plugins-ugly
 # cd gst-plugins-ugly; git reset --hard %{gitcommit}; ./autogen.sh; make; make distcheck
-# modified with gst-p-ugly-cleanup.sh from SOURCE1
+Source0:        gst-plugins-ugly-%{version}.tar.xz
 %else
-# The source is:
-# http://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-%{version}.tar.xz
-# modified with gst-p-ugly-cleanup.sh from SOURCE1
+Source0:        https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-%{version}.tar.xz
 %endif
-Source0:        gst-plugins-ugly-free-%{version}.tar.xz
-Source1:        gst-p-ugly-cleanup.sh
 
 BuildRequires:	meson >= 0.48.0
 BuildRequires:	gcc
@@ -36,9 +39,12 @@ BuildRequires:  liba52-devel
 BuildRequires:  libcdio-devel
 BuildRequires:  libdvdread-devel
 BuildRequires:  libmpeg2-devel
+%if %{with amr}
+BuildRequires:  opencore-amr-devel
+%endif
 
-# when amr* were moved here from -ugly
-Conflicts: gstreamer1-plugins-ugly < 1.20.5-2
+# when asfdemux, dvdlpcmdec, dvdsub, and realmedia were moved here
+Conflicts: gstreamer1-plugins-ugly < 1.22.7-2
 
 %description
 GStreamer is a streaming media framework, based on graphs of elements which
@@ -69,10 +75,11 @@ is not fully compatible with LGPL.
 %meson \
     -D package-name="Fedora GStreamer-plugins-ugly package" \
     -D package-origin="http://download.fedoraproject.org" \
+    %{!?with_amr:-D amrnb=disabled -D amrwbdec=disabled } \
     -D doc=disabled \
-    -D amrnb=disabled -D amrwbdec=disabled -D sidplay=disabled \
-    -D x264=disabled -D asfdemux=disabled -D dvdlpcmdec=disabled \
-    -D dvdsub=disabled -D realmedia=disabled -D gpl=enabled
+    -D sidplay=disabled \
+    -D x264=disabled \
+    -D gpl=enabled
 
 %meson_build
 
@@ -135,12 +142,21 @@ find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 %{_datadir}/appdata/*.appdata.xml
 
 # Plugins without external dependencies
+%{_libdir}/gstreamer-%{majorminor}/libgstasf.so
+%{_libdir}/gstreamer-%{majorminor}/libgstdvdlpcmdec.so
+%{_libdir}/gstreamer-%{majorminor}/libgstdvdsub.so
+%{_libdir}/gstreamer-%{majorminor}/libgstrealmedia.so
 
 # Plugins with external dependencies
 %{_libdir}/gstreamer-%{majorminor}/libgsta52dec.so
 %{_libdir}/gstreamer-%{majorminor}/libgstcdio.so
 %{_libdir}/gstreamer-%{majorminor}/libgstdvdread.so
 %{_libdir}/gstreamer-%{majorminor}/libgstmpeg2dec.so
+%if %{with amr}
+%{_libdir}/gstreamer-%{majorminor}/libgstamrnb.so
+%{_libdir}/gstreamer-%{majorminor}/libgstamrwbdec.so
+%{_datadir}/gstreamer-%{majorminor}/presets/GstAmrnbEnc.prs
+%endif
 
 %if 0
 %files devel
@@ -148,15 +164,96 @@ find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 %endif
 
 %changelog
-* Thu Apr 13 2023 Wim Taymans <wtaymans@redhat.com> - 1.22.1-1
+* Sat Nov 09 2024 Wim Taymans <wtaymans@redhat.com> - 1.22.12-3
+- Rebuild
+- Resolves: RHEL-38511, RHEL-41157
+
+* Fri Nov 08 2024 Wim Taymans <wtaymans@redhat.com> - 1.22.12-2
+- Rebuild
+- Resolves: RHEL-38511, RHEL-41157
+
+* Tue Apr 30 2024 Gwyn Ciesla <gwync@protonmail.com> - 1.22.12-1
+- 1.22.12
+
+* Thu Apr 18 2024 Gwyn Ciesla <gwync@protonmail.com> - 1.22.11-1
+- 1.22.11
+
+* Thu Jan 25 2024 Gwyn Ciesla <gwync@protonmail.com> - 1.22.9-1
+- 1.22.9
+
+* Wed Jan 24 2024 Fedora Release Engineering <releng@fedoraproject.org> - 1.22.8-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_40_Mass_Rebuild
+
+* Sat Jan 20 2024 Fedora Release Engineering <releng@fedoraproject.org> - 1.22.8-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_40_Mass_Rebuild
+
+* Wed Dec 20 2023 Yaakov Selkowitz <yselkowi@redhat.com> - 1.22.8-2
+- Enable asfdemux, dvdlpcmdec, dvdsub, and realmedia plugins
+- Disable AMR plugins in RHEL builds
+- Resolves: rhbz#2236889
+
+* Mon Dec 18 2023 Gwyn Ciesla <gwync@protonmail.com> - 1.22.8-1
+- 1.22.8
+
+* Tue Nov 14 2023 Gwyn Ciesla <gwync@protonmail.com> - 1.22.7-1
+- 1.22.7
+
+* Fri Jul 21 2023 Wim Taymans <wtaymans@redhat.com> - 1.22.5-1
+- Update to 1.22.5
+
+* Thu Jul 20 2023 Fedora Release Engineering <releng@fedoraproject.org> - 1.22.3-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_39_Mass_Rebuild
+
+* Thu May 25 2023 Wim Taymans <wtaymans@redhat.com> - 1.22.3-1
+- Update to 1.22.3
+
+* Thu Apr 13 2023 Wim Taymans <wtaymans@redhat.com> - 1.22.2-1
+- Update to 1.22.2
+
+* Wed Mar 15 2023 Wim Taymans <wtaymans@redhat.com> - 1.22.1-2
+- Rebuild for new AMR plugins.
+
+* Mon Mar 13 2023 Wim Taymans <wtaymans@redhat.com> - 1.22.1-1
 - Update to 1.22.1
 
-* Mon Aug 09 2021 Mohan Boddu <mboddu@redhat.com> - 1.18.4-3
-- Rebuilt for IMA sigs, glibc 2.34, aarch64 flags
-  Related: rhbz#1991688
+* Tue Jan 24 2023 Wim Taymans <wtaymans@redhat.com> - 1.22.0-1
+- Update to 1.22.0
 
-* Fri Apr 16 2021 Mohan Boddu <mboddu@redhat.com> - 1.18.4-2
-- Rebuilt for RHEL 9 BETA on Apr 15th 2021. Related: rhbz#1947937
+* Fri Jan 20 2023 Wim Taymans <wtaymans@redhat.com> - 1.21.90-1
+- Update to 1.21.90
+
+* Thu Jan 19 2023 Fedora Release Engineering <releng@fedoraproject.org> - 1.20.5-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_38_Mass_Rebuild
+
+* Wed Jan 11 2023 Wim Taymans <wtaymans@redhat.com> - 1.20.5-1
+- Update to 1.20.5
+
+* Thu Oct 13 2022 Wim Taymans <wtaymans@redhat.com> - 1.20.4-1
+- Update to 1.20.4
+
+* Thu Jul 21 2022 Fedora Release Engineering <releng@fedoraproject.org> - 1.20.3-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild
+
+* Mon Jul 18 2022 Wim Taymans <wtaymans@redhat.com> - 1.20.3-1
+- Update to 1.20.3
+
+* Fri Feb 4 2022 Wim Taymans <wtaymans@redhat.com> - 1.20.0-1
+- Update to 1.20.0
+
+* Thu Jan 20 2022 Fedora Release Engineering <releng@fedoraproject.org> - 1.19.3-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
+
+* Thu Nov 11 2021 Wim Taymans <wtaymans@redhat.com> - 1.19.3-1
+- Update to 1.19.3
+
+* Thu Sep 23 2021 Wim Taymans <wtaymans@redhat.com> - 1.19.2-1
+- Update to 1.19.2
+
+* Thu Jul 22 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1.19.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
+* Thu Jun 03 2021 Wim Taymans <wtaymans@redhat.com> - 1.19.1-1
+- Update to 1.19.1
 
 * Tue Mar 16 2021 Wim Taymans <wtaymans@redhat.com> - 1.18.4-1
 - Update to 1.18.4
