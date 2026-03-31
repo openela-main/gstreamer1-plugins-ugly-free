@@ -1,0 +1,46 @@
+From 5e484fdd24d2081bac0e6da171fd2b7b25715c40 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Sebastian=20Dr=C3=B6ge?= <sebastian@centricular.com>
+Date: Wed, 11 Feb 2026 19:58:31 +0200
+Subject: [PATCH 2/3] rmdemux: Check if new video fragment overflows the
+ fragment storage before storing it
+
+There already was a check but that happened afterwards, i.e. after an
+out-of-bounds write that overwrote some following struct data.
+
+Fixes GST-SA-2026-0005, CVE-2026-2922, ZDI-CAN-28845.
+
+Fixes https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/4905
+
+Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/10883>
+---
+ subprojects/gst-plugins-ugly/gst/realmedia/rmdemux.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/subprojects/gst-plugins-ugly/gst/realmedia/rmdemux.c b/subprojects/gst-plugins-ugly/gst/realmedia/rmdemux.c
+index 981932675b..521d471678 100644
+--- a/subprojects/gst-plugins-ugly/gst/realmedia/rmdemux.c
++++ b/subprojects/gst-plugins-ugly/gst/realmedia/rmdemux.c
+@@ -2369,15 +2369,17 @@ gst_rmdemux_parse_video_packet (GstRMDemux * rmdemux, GstRMDemuxStream * stream,
+       stream->frag_length = fragment_size;
+     }
+ 
++    if (stream->frag_count >= MAX_FRAGS) {
++      gst_buffer_unref (fragment);
++      goto too_many_fragments;
++    }
++
+     /* put fragment in adapter */
+     gst_adapter_push (stream->adapter, fragment);
+     stream->frag_offset[stream->frag_count] = stream->frag_current;
+     stream->frag_current += fragment_size;
+     stream->frag_count++;
+ 
+-    if (stream->frag_count > MAX_FRAGS)
+-      goto too_many_fragments;
+-
+     GST_DEBUG_OBJECT (rmdemux, "stored fragment in adapter %d/%d",
+         stream->frag_current, stream->frag_length);
+ 
+-- 
+2.53.0
+
