@@ -13,7 +13,7 @@
 
 Name:           gstreamer1-plugins-ugly-free
 Version:        1.22.12
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        GStreamer streaming media framework "ugly" plugins
 
 License:        LGPL-2.0-or-later AND LGPL-2.1-or-later AND CC0-1.0
@@ -25,6 +25,10 @@ Source0:        gst-plugins-ugly-%{version}.tar.xz
 %else
 Source0:        https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-%{version}.tar.xz
 %endif
+
+Patch:          0001-asfdemux-Error-out-on-files-with-more-than-32-stream.patch
+Patch:          0002-rmdemux-Check-if-new-video-fragment-overflows-the-fr.patch
+Patch:          0003-rmdemux-Avoid-integer-overflow-when-checking-if-enou.patch
 
 BuildRequires:	meson >= 0.48.0
 BuildRequires:	gcc
@@ -67,7 +71,7 @@ is not fully compatible with LGPL.
 
 
 %prep
-%setup -q -n gst-plugins-ugly-%{version}
+%autosetup -n gst-plugins-ugly-%{version} -p3
 
 
 %build
@@ -164,6 +168,10 @@ find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 %endif
 
 %changelog
+* Fri Mar 27 2026 Wim Taymans <wtaymans@redhat.com> - 1.22.12-4
+- Add patch for CVE-2026-2920, CVE-2026-2922
+  Resolves: RHEL-156059, RHEL-156268
+
 * Sat Nov 09 2024 Wim Taymans <wtaymans@redhat.com> - 1.22.12-3
 - Rebuild
 - Resolves: RHEL-38511, RHEL-41157
