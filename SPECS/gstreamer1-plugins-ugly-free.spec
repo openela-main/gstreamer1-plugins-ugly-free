@@ -13,7 +13,7 @@
 
 Name:           gstreamer1-plugins-ugly-free
 Version:        1.22.12
-Release:        4%{?dist}
+Release:        6%{?dist}
 Summary:        GStreamer streaming media framework "ugly" plugins
 
 License:        LGPL-2.0-or-later AND LGPL-2.1-or-later AND CC0-1.0
@@ -168,9 +168,16 @@ find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 %endif
 
 %changelog
+* Tue Mar 31 2026 Veronika Kabatova <vkabatov@redhat.com> - 1.22.12-6
+- Rebuild to fix missing binaries due to buildsystem oversight
+
+* Mon Mar 30 2026 Tomas Pelka <tpelka@redhat.com> - 1.22.12-5
+- Rebuild for z-stream
+- Resolves: RHEL-156061, RHEL-156274
+
 * Fri Mar 27 2026 Wim Taymans <wtaymans@redhat.com> - 1.22.12-4
 - Add patch for CVE-2026-2920, CVE-2026-2922
-  Resolves: RHEL-156059, RHEL-156268
+  Resolves: RHEL-156061, RHEL-156274
 
 * Sat Nov 09 2024 Wim Taymans <wtaymans@redhat.com> - 1.22.12-3
 - Rebuild
