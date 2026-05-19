@@ -5,7 +5,7 @@
 #global shortcommit %(c=%{gitcommit}; echo ${c:0:5})
 
 Name:           gstreamer1-plugins-ugly-free
-Version:        1.24.11
+Version:        1.26.7
 Release:        2%{?dist}
 Summary:        GStreamer streaming media framework "ugly" plugins
 
@@ -152,9 +152,17 @@ find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 %endif
 
 %changelog
-* Fri Mar 27 2026 Wim Taymans <wtaymans@redhat.com> - 1.24.11-2
-- Add patch for CVE-2026-2920, CVE-2026-2922
-  Resolves: RHEL-156146, RHEL-156043
+* Tue Mar 31 2026 Wim Taymans <wtaymans@redhat.com> - 1.26.7-2
+- Add patches for CVE-2026-2920 and CVE-2026-2922
+  Resolves: RHEL-156044, RHEL-156165
+
+* Tue Nov 04 2025 Wim Taymans <wtaymans@redhat.com> - 1.26.7-1
+- Update to 1.26.7
+  Resolves: RHEL-126057
+
+* Tue Jun 17 2025 Wim Taymans <wtaymans@redhat.com> - 1.26.2-1
+- Update to 1.26.2
+  Resolves: DESKTOP-1858
 
 * Tue Jan 14 2025 Wim Taymans <wtaymans@redhat.com> - 1.24.11-1
 - Update to 1.24.11

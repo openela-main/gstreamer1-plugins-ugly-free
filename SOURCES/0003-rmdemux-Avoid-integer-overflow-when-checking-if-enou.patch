@@ -1,4 +1,4 @@
-From 9e0dab796a9701e1bda60603f9dda55cfc5f23d5 Mon Sep 17 00:00:00 2001
+From 48b68ad8944f0aec0ac0a1a288b033ad19085a31 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Sebastian=20Dr=C3=B6ge?= <sebastian@centricular.com>
 Date: Wed, 11 Feb 2026 20:00:04 +0200
 Subject: [PATCH 3/3] rmdemux: Avoid integer overflow when checking if enough

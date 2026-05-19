@@ -1,4 +1,4 @@
-From 5e484fdd24d2081bac0e6da171fd2b7b25715c40 Mon Sep 17 00:00:00 2001
+From 0d8ff5167cae09d232765aa4d130a6d2ff89151c Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Sebastian=20Dr=C3=B6ge?= <sebastian@centricular.com>
 Date: Wed, 11 Feb 2026 19:58:31 +0200
 Subject: [PATCH 2/3] rmdemux: Check if new video fragment overflows the
