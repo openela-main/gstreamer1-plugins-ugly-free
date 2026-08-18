@@ -13,7 +13,7 @@
 
 Name:           gstreamer1-plugins-ugly-free
 Version:        1.22.12
-Release:        6%{?dist}.1
+Release:        6%{?dist}.2
 Summary:        GStreamer streaming media framework "ugly" plugins
 
 License:        LGPL-2.0-or-later AND LGPL-2.1-or-later AND CC0-1.0
@@ -31,6 +31,8 @@ Patch:          0002-rmdemux-Check-if-new-video-fragment-overflows-the-fr.patch
 Patch:          0003-rmdemux-Avoid-integer-overflow-when-checking-if-enou.patch
 # https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/11825
 Patch:          0004-rmdemux-security-fixes-CVE-2026-53704.patch
+# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/12233
+Patch:          0005-asfdemux-Avoid-integer-overflows-during-bounds-check.patch
 
 BuildRequires:	meson >= 0.48.0
 BuildRequires:	gcc
@@ -170,6 +172,10 @@ find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 %endif
 
 %changelog
+* Mon Aug 10 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 1.22.12-6.2
+- Fix integer overflows during bounds checks in asfdemux
+- Resolves: RHEL-235519
+
 * Wed Jun 24 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 1.22.12-6.1
 - Fix CVE-2026-53704: multiple rmdemux security issues
 - Resolves: RHEL-184464
