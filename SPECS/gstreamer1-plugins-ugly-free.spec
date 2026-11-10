@@ -6,7 +6,7 @@
 
 Name:           gstreamer1-plugins-ugly-free
 Version:        1.26.7
-Release:        2%{?dist}.2
+Release:        4%{?dist}
 Summary:        GStreamer streaming media framework "ugly" plugins
 
 License:        LGPL-2.0-or-later AND LGPL-2.1-or-later AND CC0-1.0
@@ -22,16 +22,10 @@ Source0:        https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugi
 Patch:          0001-asfdemux-Error-out-on-files-with-more-than-32-stream.patch
 Patch:          0002-rmdemux-Check-if-new-video-fragment-overflows-the-fr.patch
 Patch:          0003-rmdemux-Avoid-integer-overflow-when-checking-if-enou.patch
-# https://github.com/GStreamer/gstreamer/commit/f53c8fdacd1ea231c8ca50313aa1d00d4503ed41
-# https://github.com/GStreamer/gstreamer/commit/8d441eb0264a87264d4d26b87f4a49e2ef745bcf
-# https://github.com/GStreamer/gstreamer/commit/a598bc41ebde18c30deb28d2b248a56b790f9453
-# https://github.com/GStreamer/gstreamer/commit/19b05081f237724de53833a2659c0d762021c9f4
-# https://github.com/GStreamer/gstreamer/commit/9de204d7a0d7f584cddfc922f3b9fbe4058ae22a
-# https://github.com/GStreamer/gstreamer/commit/f6166a777ab070ef98a3abafbbec50274547a503
-# https://github.com/GStreamer/gstreamer/commit/35b68ec1ba745fc97eeacf6859866e0f2b3f93b4
-Patch:          0004-rmdemux-CVE-2026-53703.patch
-# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/12233
-Patch:          0005-asfdemux-CVE-2026-19389.patch
+# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/commit/9de204d7a0d7f584cddfc922f3b9fbe4058ae22a
+Patch:          0004-rmdemux-Check-that-enough-data-is-available-before-p.patch
+# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/commit/cc36734ceed745216ea481e2f67901680e4f6304
+Patch:          0005-asfdemux-Avoid-integer-overflows-during-bounds-check.patch
 
 BuildRequires:	meson >= 0.48.0
 BuildRequires:	gcc
@@ -162,17 +156,17 @@ find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 %endif
 
 %changelog
-* Mon Aug 10 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 1.26.7-2.2
-- Fix CVE-2026-19389: integer overflow vulnerabilities in asfdemux
-  Resolves: RHEL-235515
+* Mon Aug 17 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 1.26.7-4
+- Fix CVE-2026-19389: asfdemux integer overflows during bounds checks
+  Resolves: RHEL-235517
 
-* Tue Jun 23 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 1.26.7-2.1
-- Fix CVE-2026-53703: multiple security issues in rmdemux
-  Resolves: RHEL-184439
+* Wed Jul 29 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 1.26.7-3
+- Fix CVE-2026-53703: rmdemux header parsing bounds checks
+  Resolves: RHEL-184440
 
 * Tue Mar 31 2026 Wim Taymans <wtaymans@redhat.com> - 1.26.7-2
 - Add patches for CVE-2026-2920 and CVE-2026-2922
-  Resolves: RHEL-156044, RHEL-156165
+  Resolves: RHEL-156045, RHEL-156176
 
 * Tue Nov 04 2025 Wim Taymans <wtaymans@redhat.com> - 1.26.7-1
 - Update to 1.26.7
