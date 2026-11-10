@@ -13,7 +13,7 @@
 
 Name:           gstreamer1-plugins-ugly-free
 Version:        1.22.12
-Release:        6%{?dist}.2
+Release:        8%{?dist}
 Summary:        GStreamer streaming media framework "ugly" plugins
 
 License:        LGPL-2.0-or-later AND LGPL-2.1-or-later AND CC0-1.0
@@ -29,10 +29,10 @@ Source0:        https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugi
 Patch:          0001-asfdemux-Error-out-on-files-with-more-than-32-stream.patch
 Patch:          0002-rmdemux-Check-if-new-video-fragment-overflows-the-fr.patch
 Patch:          0003-rmdemux-Avoid-integer-overflow-when-checking-if-enou.patch
-# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/11825
-Patch:          0004-rmdemux-security-fixes-CVE-2026-53704.patch
+# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/11832
+Patch:          0004-CVE-2026-53704.patch
 # https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/12233
-Patch:          0005-asfdemux-Avoid-integer-overflows-during-bounds-check.patch
+Patch:          0005-CVE-2026-19389.patch
 
 BuildRequires:	meson >= 0.48.0
 BuildRequires:	gcc
@@ -172,13 +172,12 @@ find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 %endif
 
 %changelog
-* Mon Aug 10 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 1.22.12-6.2
+* Tue Aug 18 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 1.22.12-8
 - Fix integer overflows during bounds checks in asfdemux
-- Resolves: RHEL-235519
+  (CVE-2026-19389)
 
-* Wed Jun 24 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 1.22.12-6.1
-- Fix CVE-2026-53704: multiple rmdemux security issues
-- Resolves: RHEL-184464
+* Wed Jul 29 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 1.22.12-7
+- Fix OOB reads in the realmedia demuxer (CVE-2026-53703, CVE-2026-53704)
 
 * Tue Mar 31 2026 Veronika Kabatova <vkabatov@redhat.com> - 1.22.12-6
 - Rebuild to fix missing binaries due to buildsystem oversight
